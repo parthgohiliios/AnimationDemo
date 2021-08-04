@@ -14,6 +14,9 @@
 		636FD5CD26B184D200FC385D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 636FD5CC26B184D200FC385D /* Assets.xcassets */; };
 		636FD5D026B184D200FC385D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 636FD5CE26B184D200FC385D /* LaunchScreen.storyboard */; };
 		636FD5D926B18F3900FC385D /* GClass.swift in Sources */ = {isa = PBXBuildFile; fileRef = 636FD5D826B18F3900FC385D /* GClass.swift */; };
+		6380B47126BA8D21003C3AC4 /* MapViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6380B47026BA8D21003C3AC4 /* MapViewController.swift */; };
+		6380B47426BA8DA8003C3AC4 /* ViewController+TransitionDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6380B47326BA8DA8003C3AC4 /* ViewController+TransitionDelegate.swift */; };
+		6380B47726BA8F83003C3AC4 /* Animator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6380B47626BA8F83003C3AC4 /* Animator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +29,9 @@
 		636FD5CF26B184D200FC385D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		636FD5D126B184D200FC385D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		636FD5D826B18F3900FC385D /* GClass.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GClass.swift; sourceTree = "<group>"; };
+		6380B47026BA8D21003C3AC4 /* MapViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MapViewController.swift; sourceTree = "<group>"; };
+		6380B47326BA8DA8003C3AC4 /* ViewController+TransitionDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "ViewController+TransitionDelegate.swift"; sourceTree = "<group>"; };
+		6380B47626BA8F83003C3AC4 /* Animator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Animator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -61,11 +67,14 @@
 				636FD5C326B184D000FC385D /* AppDelegate.swift */,
 				636FD5C526B184D000FC385D /* SceneDelegate.swift */,
 				636FD5C726B184D000FC385D /* ViewController.swift */,
+				6380B47026BA8D21003C3AC4 /* MapViewController.swift */,
+				6380B47626BA8F83003C3AC4 /* Animator.swift */,
 				636FD5C926B184D000FC385D /* Main.storyboard */,
 				636FD5CC26B184D200FC385D /* Assets.xcassets */,
 				636FD5CE26B184D200FC385D /* LaunchScreen.storyboard */,
 				636FD5D126B184D200FC385D /* Info.plist */,
 				636FD5D826B18F3900FC385D /* GClass.swift */,
+				6380B47326BA8DA8003C3AC4 /* ViewController+TransitionDelegate.swift */,
 			);
 			path = AnimationDemo;
 			sourceTree = "<group>";
@@ -143,6 +152,9 @@
 				636FD5D926B18F3900FC385D /* GClass.swift in Sources */,
 				636FD5C826B184D000FC385D /* ViewController.swift in Sources */,
 				636FD5C426B184D000FC385D /* AppDelegate.swift in Sources */,
+				6380B47126BA8D21003C3AC4 /* MapViewController.swift in Sources */,
+				6380B47426BA8DA8003C3AC4 /* ViewController+TransitionDelegate.swift in Sources */,
+				6380B47726BA8F83003C3AC4 /* Animator.swift in Sources */,
 				636FD5C626B184D000FC385D /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

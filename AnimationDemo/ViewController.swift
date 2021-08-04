@@ -28,11 +28,11 @@ class RoomCell: UICollectionViewCell{
 }
 
 struct RoomModel {
-
+	
 	var isActive: Bool = false
 	var roomImage: UIImage = #imageLiteral(resourceName: "pexels-photo-930004")
 	var roomTitle: String = ""
-
+	
 	static var active: RoomModel {
 		RoomModel.init()
 	}
@@ -47,7 +47,10 @@ class ViewController: UIViewController {
 	@IBOutlet private weak var vwContainer: UIView!
 	@IBOutlet private weak var vwColContainer: UIView!
 	@IBOutlet private weak var vwMapContainer: UIView!
+	@IBOutlet private weak var vwAnimateContainer: UIView!
+	
 	@IBOutlet private weak var imgView: UIImageView!
+	@IBOutlet private weak var selectedRoomImageView: UIImageView!
 	@IBOutlet private weak var topConstraints: NSLayoutConstraint!
 	@IBOutlet private weak var bottomConstraints: NSLayoutConstraint!
 	@IBOutlet private weak var roomTitleLabel: UILabel!
@@ -59,14 +62,15 @@ class ViewController: UIViewController {
 	private var initialCenter: CGPoint = .zero
 	private var isOpenBottomSheet: Bool = false
 	private var bottomLine: CALayer!
-	var minDraggableValue: CGFloat?
+	private var minDraggableValue: CGFloat?
 	
-	private let blurEffect = UIBlurEffect(style: .regular)
+	private let blurEffect = UIBlurEffect(style: .light)
 	private var visualEffectView = UIVisualEffectView()
 	
-	private let fillLayer = CAShapeLayer()
-	private let fillMaskLayer = CAShapeLayer()
-	
+	var selectedCell: UIView?
+	var selectedCellImageViewSnapshot: UIView?
+	var animator: Animator?
+
 	var selectedIndex: Int = -1{
 		didSet{
 			if let cell = self.colRoom.cellForItem(at: [0,self.selectedIndex]) as? RoomCell{
@@ -125,8 +129,12 @@ class ViewController: UIViewController {
 		
 		self.roomTitleLabel.text = "Bed"
 		
+		self.selectedCell = self.vwAnimateContainer
+		self.selectedCellImageViewSnapshot = self.vwAnimateContainer?.snapshotView(afterScreenUpdates: false)
+		
 		createBlur()
 		configureData()
+		tapConfiguration()
 
 	}
 	
@@ -139,13 +147,13 @@ class ViewController: UIViewController {
 	}
 }
 
-//MARK:-
-//-------------------------------------------------------------------------------------
 
+//MARK:- Configuring Data
+//-------------------------------------------------------------------------------------
 extension ViewController {
 	
 	func configureData(){
-
+		
 		self.arrRooms = [
 			RoomModel.init(isActive: false, roomImage: UIImage.init(named: "room1")!, roomTitle: "Bed Room"),
 			RoomModel.init(isActive: false, roomImage: UIImage.init(named: "room2")!, roomTitle: "Bed Room"),
@@ -159,20 +167,39 @@ extension ViewController {
 	}
 }
 
+//MARK:- Actions
+//-------------------------------------------------------------------------------------
+extension ViewController {
+	
+	private func tapConfiguration(){
+		let tapGesture = UITapGestureRecognizer.init(target: self, action: #selector(self.mapViewTapped(sender:)))
+		self.vwMapContainer.isUserInteractionEnabled = true
+		self.vwMapContainer.addGestureRecognizer(tapGesture)
+	}
+	
+	@objc func mapViewTapped(sender: UIView){
+		self.presentSecondViewController()
+	}
+	
+}
+
 //MARK:- Blur layer
 //-------------------------------------------------------------------------------------
 extension ViewController {
-
+	
 	func createBlur(){
 		visualEffectView.frame = view.bounds
-		imgView.addSubview(visualEffectView)
-		UIView.animate(withDuration: 0.4) {
-			self.visualEffectView.effect = self.blurEffect
-			self.visualEffectView.alpha = 0.8
-		} completion: {_ in
-			self.visualEffectView.effect = nil
-		}
+		selectedRoomImageView.addSubview(visualEffectView)
+	}
+	
+	func presentSecondViewController() {
+		let secondViewController = UIStoryboard(name: "Main", bundle: nil).instantiateViewController(withIdentifier: "MapViewController") as! MapViewController
 
+		secondViewController.transitioningDelegate = self
+
+		secondViewController.modalPresentationStyle = .fullScreen
+
+		present(secondViewController, animated: true)
 	}
 }
 
@@ -265,7 +292,7 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, 
 			return UICollectionViewCell()
 		}
 		cell.cellData = self.arrRooms[indexPath.row]
-
+		
 		guard let _ = self.bottomLine else {
 			self.bottomLine = CALayer()
 			self.colRoom.layer.addSublayer(self.bottomLine)
@@ -278,23 +305,30 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource, 
 	
 	func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
 		guard self.selectedIndex != indexPath.row else { return }
-		self.arrRooms[indexPath.row].isActive.toggle()
-		self.imgView.image = self.arrRooms[indexPath.row].roomImage
-		self.visualEffectView.alpha = 0.8
+
 		self.previousIndex = self.selectedIndex
 		self.selectedIndex = indexPath.row
 		
-		self.visualEffectView.frame = CGRect.init(x: 0, y: ScreenConstants.screenHeight, width: ScreenConstants.screenWidth, height: 0)
+		self.selectedRoomImageView.image = self.arrRooms[indexPath.row].roomImage
+		
+		self.visualEffectView.frame = self.imgView.frame
 		self.visualEffectView.effect = self.blurEffect
 		self.visualEffectView.alpha = 0.8
 		
-		UIView.animate(withDuration: 0.2) {
-			self.visualEffectView.frame = CGRect.init(x: 0, y: 0, width: ScreenConstants.screenWidth, height: self.imgView.frame.height)
+		self.selectedRoomImageView.frame = CGRect.init(x: self.imgView.frame.origin.x, y: ScreenConstants.screenHeight, width: self.imgView.frame.width, height: self.imgView.frame.height)
+		
+		UIView.animate(withDuration: 0.1) {
+			
+			self.selectedRoomImageView.frame = CGRect.init(x: self.imgView.frame.origin.x, y: 0, width: self.imgView.frame.width, height: self.imgView.frame.height)
 		} completion: {_ in
+			
 			UIView.animate(withDuration: 0.2) {
-				self.visualEffectView.alpha = 0.0
+				self.visualEffectView.frame = CGRect.init(x: 0, y: ScreenConstants.screenHeight, width: ScreenConstants.screenWidth, height: ScreenConstants.screenHeight)
 			} completion: { (_) in
+				
 				self.visualEffectView.effect = nil
+				self.selectedRoomImageView.frame = CGRect.init(x: self.imgView.frame.origin.x, y: 0, width: self.imgView.frame.width, height: 0)
+				self.imgView.image = self.arrRooms[indexPath.row].roomImage
 			}
 		}
 	}
@@ -316,6 +350,9 @@ extension ViewController: UIGestureRecognizerDelegate{
 	}
 }
 
+
+//MARK:- Constants
+//-------------------------------------------------------------------------------------
 struct ScreenConstants {
 	static let screenWidth = UIScreen.main.bounds.width
 	static let screenHeight = UIScreen.main.bounds.height
